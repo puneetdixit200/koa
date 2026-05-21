@@ -11,17 +11,28 @@ describe('ctx.origin', () => {
     const req = {
       url: '/users/1?next=/dashboard',
       headers: {
-        host: 'localhost',
-        origin: 'http://example.com'
+        host: 'localhost'
       },
       socket,
       __proto__: Stream.Readable.prototype
     }
     const ctx = context(req)
-    assert.strictEqual(ctx.origin, 'http://example.com')
+    assert.strictEqual(ctx.origin, 'http://localhost')
 
     // change it also work
     ctx.url = '/foo/users/1?next=/dashboard'
-    assert.strictEqual(ctx.origin, 'http://example.com')
+    assert.strictEqual(ctx.origin, 'http://localhost')
+  })
+
+  it('should not use the Origin header', () => {
+    const ctx = context({
+      url: '/users/1',
+      headers: {
+        host: 'localhost',
+        origin: 'http://example.com'
+      }
+    })
+
+    assert.strictEqual(ctx.origin, 'http://localhost')
   })
 })
